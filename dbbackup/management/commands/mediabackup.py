@@ -31,7 +31,8 @@ class Command(BaseDbBackupCommand):
         make_option("-o", "--output-filename", default=None,
                     help="Specify filename on storage"),
         make_option("-O", "--output-path", default=None,
-                    help="Specify where to store on local filesystem",)
+                    help="Specify where to store on local filesystem",),
+        make_option("-x", "--exclude", help="Exclude media folder", nargs='+', default=[])
     )
 
     @utils.email_uncaught_exception
@@ -46,6 +47,7 @@ class Command(BaseDbBackupCommand):
 
         self.filename = options.get('output_filename')
         self.path = options.get('output_path')
+        self.exclude_dirs = options.get('exclude')
         try:
             self.media_storage = get_storage_class()()
             self.storage = get_storage()
@@ -65,7 +67,7 @@ class Command(BaseDbBackupCommand):
             subdirs, files = self.media_storage.listdir(path)
             for media_filename in files:
                 yield os.path.join(path, media_filename)
-            dirs.extend([os.path.join(path, subdir) for subdir in subdirs])
+            dirs.extend([os.path.join(path, subdir) for subdir in subdirs if subdir not in self.exclude_dirs])
 
     def _create_tar(self, name):
         """Create TAR file."""

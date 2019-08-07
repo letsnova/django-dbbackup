@@ -16,7 +16,7 @@ keywords = [
 ]
 
 setup(
-    name='django-dbbackup',
+    name='nova-django-dbbackup',
     version=dbbackup.__version__,
     description=dbbackup.__doc__,
     author=dbbackup.__author__,

@@ -32,7 +32,7 @@ class Command(BaseDbBackupCommand):
                     help="Specify filename on storage"),
         make_option("-O", "--output-path", default=None,
                     help="Specify where to store on local filesystem",),
-        make_option("-x", "--exclude", help="Exclude media folder", nargs='+', default=[])
+        make_option("-x", "--exclude", help="Exclude media folder", action="append", nargs='+', default=[])
     )
 
     @utils.email_uncaught_exception
@@ -47,7 +47,11 @@ class Command(BaseDbBackupCommand):
 
         self.filename = options.get('output_filename')
         self.path = options.get('output_path')
-        self.exclude_dirs = options.get('exclude')
+        _exclude_dirs = options.get('exclude')
+        self.exclude_dirs = []
+        for param in _exclude_dirs:
+            self.exclude_dirs += param
+
         try:
             self.media_storage = get_storage_class()()
             self.storage = get_storage()
